@@ -1,3 +1,4 @@
+from fastapi import Query
 from fastapi import FastAPI, Query
 
 app = FastAPI(title="Mini Blog")
@@ -22,7 +23,7 @@ def home():
 # @app.get("/posts")  sin query params
 # def list_post():
 #     return {"data": BLOG_POST}
-
+# PARA QUERYPARAMS
 @app.get("/posts")
 def list_post(query: str | None = Query(default=None, description="Texto para buscar por título")):
     # como tengo acceso al query agrego el filtro también puedo evaluar si se envía un query
@@ -46,6 +47,55 @@ def list_post(query: str | None = Query(default=None, description="Texto para bu
         return {"data": results, "query": query}
 
     return {"data": BLOG_POST}
+
+# PARA PATH PARAMETERS
+
+
+# @app.get("/posts/{post_id}")
+# def get_post(post_id: int):# 
+#     # vamos a pasar por todos los post y ver cuál tiene ese id
+#     for post in BLOG_POST:
+#         if post["id"] == post_id:  # comparo el id del post con el que se pasa por url
+#             return {"data": post}
+#     return {"error": "Post no encontrado"}
+
+# Path parameters y query params
+@app.get("/posts/{post_id}")
+def get_post(post_id: int, include_content: bool = Query(default =True, description="Incluir o no el contenido")):
+    # vamos a pasar por todos los post y ver cuál tiene ese id
+    for post in BLOG_POST:
+        if post["id"] == post_id:  # comparo el id del post con el que se pasa por url
+          if not include_content: # debo evaluar si tengo ese query parameters
+              return {"id": post["id"], "title": post["title"]}
+          return {"data": post}
+    return {"error": "Post no encontrado"}
+""" 
+1. @app.get("/posts/{post_id}")
+
+Este decorador indica que la función siguiente responderá a solicitudes GET en la ruta /posts/ seguido de un valor variable (post_id). Ese valor se captura como parámetro de la función.
+2. def get_post(post_id: int, include_content: bool = Query(default=True, description="Incluir o no el contenido")):
+
+Se define la función get_post.
+post_id: int es un parámetro de tipo entero que se obtiene de la URL (path parameter).
+include_content: bool es un parámetro de consulta (query param) que se obtiene de la URL después del signo de interrogación (?), por ejemplo: /posts/1?include_content=False. Por defecto es True.
+Query() permite definir validaciones, valores por defecto y descripciones para el parámetro.
+3. for post in BLOG_POST:
+
+Se recorre la lista BLOG_POST, que simula una base de datos de posts.
+4. if post["id"] == post_id:
+
+Se compara el id de cada post con el valor recibido en la URL. Si coincide, se ejecuta el siguiente bloque.
+5. if not include_content:
+
+Si include_content es False, se retorna solo el id y el título del post (sin el contenido).
+6. return {"data": post}
+
+Si include_content es True (o no se especifica), se retorna todo el post (id, title y content).
+7. return {"error": "Post no encontrado"}
+
+Si no se encuentra ningún post con ese id, se retorna un mensaje de error.
+En resumen: este endpoint permite obtener un post por su id y decidir, mediante un query param, si quieres ver solo el id y el título o toda la información del post.
+"""
 # -------------------------------------------------
 # Explicación del código y teoría FastAPI
 # -------------------------------------------------
@@ -112,6 +162,102 @@ def list_post(query: str | None = Query(default=None, description="Texto para bu
 # def search_posts(title: str = ""):
 #     resultados = [p for p in BLOG_POST if title.lower() in p["title"].lower()]
 #     return {"data": resultados}
+
+# -------------------------------------------------
+# Uso de Path Parameters y diferencia con Query Params
+# -------------------------------------------------
+# Path parameters (parámetros de ruta) permiten capturar valores directamente en la URL.
+# Ejemplo de implementación en FastAPI:
+#
+# @app.get("/posts/{post_id}")
+# def get_post(post_id: int):
+#     for post in BLOG_POST:
+#         if post["id"] == post_id:
+#             return {"data": post}
+#     return {"error": "Post no encontrado"}
+#
+# ¿Cómo se hace la petición en la URL?
+# - http://127.0.0.1:8000/posts/1
+#   Aquí 1 es el path parameter (post_id).
+#
+# Diferencia entre query params y path params:
+# - Path params: parte de la ruta, obligatorios, identifican recursos concretos (/posts/1).
+# - Query params: van después de ?, opcionales, modifican la consulta o el resultado (/posts?query=algo).
+#
+# -------------------------------------------------
+# Ejemplo combinando path y query parameters
+# -------------------------------------------------
+# Ruta: /posts/{post_id}?include_content=False
+# - Si include_content es False, solo muestra id y title.
+# - Si no se pasa o es True, muestra todo el post.
+
+
+# @app.get("/posts/{post_id}")
+# def get_post(post_id: int, include_content: bool = Query(True, description="¿Incluir el contenido # del post?")):
+#     for post in BLOG_POST:
+#         if post["id"] == post_id:
+#             if not include_content:
+#                 return {"data": {"id": post["id"], "title": post["title"]}}
+#             return {"data": post}
+#     return {"error": "Post no encontrado"}
+
+# Ejemplo de uso en la URL:
+# - http://127.0.0.1:8000/posts/1           # Devuelve id, title y content
+# - http://127.0.0.1:8000/posts/1?include_content=False   # Devuelve solo id y title
+#
+# Más información sobre path y query params:
+# https://fastapi.tiangolo.com/es/tutorial/path-params/
+
+# -------------------------------------------------
+# Ejemplos de otros tipos de parámetros en FastAPI
+# -------------------------------------------------
+# 1. Varios parámetros de consulta (query params):
+#
+# @app.get("/search/")
+# def search_posts(query: str = None, author: str = None):
+#     # Filtra por título y autor si se proporcionan
+#     resultados = [p for p in BLOG_POST if (not query or query.lower() in p["title"].lower()) and (not author or author.lower() in p.get("author", "").lower())]
+#     return {"data": resultados}
+#
+# 2. Parámetros con valores por defecto y validaciones:
+#
+# from fastapi import Query
+#
+# @app.get("/items/")
+# def get_items(limit: int = Query(10, ge=1, le=100)):
+#     # limit debe estar entre 1 y 100
+#     return {"limit": limit}
+#
+# 3. Parámetros opcionales:
+#
+# from typing import Optional
+#
+# @app.get("/users/")
+# def get_user(name: Optional[str] = None):
+#     if name:
+#         return {"message": f"Hola, {name}"}
+#     return {"message": "Hola, usuario anónimo"}
+#
+# 4. Parámetros de cabecera (headers):
+#
+# from fastapi import Header
+#
+# @app.get("/headers/")
+# def read_header(user_agent: str = Header(None)):
+#     return {"User-Agent": user_agent}
+#
+# 5. Parámetros de cookie:
+#
+# from fastapi import Cookie
+#
+# @app.get("/cookies/")
+# def read_cookie(session_id: str = Cookie(None)):
+#     return {"session_id": session_id}
+#
+# Más información y ejemplos:
+# https://fastapi.tiangolo.com/es/tutorial/query-params-str-validations/
+# https://fastapi.tiangolo.com/es/tutorial/header-params/
+# https://fastapi.tiangolo.com/es/tutorial/cookie-params/
 #
 # Más información y ejemplos en la documentación oficial:
 # https://fastapi.tiangolo.com/es/tutorial/first-steps/
