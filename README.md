@@ -17,5 +17,3 @@ Para crear, activar y desactivar un entorno virtual en Python en Windows, sigue 
    ```
    deactivate
    ```
-
-¿Te gustaría que ejecute estos comandos por ti o necesitas ayuda con algún paso específico?

@@ -92,7 +92,8 @@ En resumen: este endpoint permite obtener un post por su id y decidir, mediante 
 """
 # -------------------------------------------------
 # Explicación del código y teoría FastAPI
-# ------------------------------------------------- 1. ¿Qué has hecho en este archivo? - Has creado una aplicación web con FastAPI. - Definiste una instancia de FastAPI llamada 'app'. - Usaste un decorador (@app.get("/")) para crear una ruta que responde a solicitudes GET en '/home'. - La función home retorna un diccionario (que FastAPI convierte automáticamente a JSON). 2. ¿Qué es un decorador en FastAPI? - Un decorador es una función especial que "envuelve" otra función para modificar su comportamiento - @app.get("/ruta") indica que la función siguiente responderá a peticiones GET en esa ruta 3. ¿Cómo se hace un GET en FastAPI - Usando el decorador @app.get("/ruta") - Cuando un usuario accede a esa ruta con el método GET, se ejecuta la función decorada 4. ¿Cómo instalar FastAPI  - Ejecuta en la terminal (con el entorno virtual activado)     pip install "fastapi[standard] 5. ¿Cómo inicializar un proyecto FastAPI - Crea un archivo Python (por ejemplo, main.py) y define la instancia de FastAPI y las rutas como en este archiv 6. ¿Cómo levantar el servido - Ejecuta en la termina     fastapi dev main. - Esto inicia el servidor en modo desarrollo, recargando cambios automáticament - Por defecto, estará disponible en http://localhost:80 7. ¿Cómo parar el servido - Ve a la terminal donde está corriendo y presiona Ctrl+ 8. Documentación automátic - FastAPI genera documentación interactiva e     http://localhost:8000/docs (Swagger U     http://localhost:8000/redoc (ReDoc)
+# -------------------------------------------------
+ 1. ¿Qué has hecho en este archivo? - Has creado una aplicación web con FastAPI. - Definiste una instancia de FastAPI llamada 'app'. - Usaste un decorador (@app.get("/")) para crear una ruta que responde a solicitudes GET en '/home'. - La función home retorna un diccionario (que FastAPI convierte automáticamente a JSON). 2. ¿Qué es un decorador en FastAPI? - Un decorador es una función especial que "envuelve" otra función para modificar su comportamiento - @app.get("/ruta") indica que la función siguiente responderá a peticiones GET en esa ruta 3. ¿Cómo se hace un GET en FastAPI - Usando el decorador @app.get("/ruta") - Cuando un usuario accede a esa ruta con el método GET, se ejecuta la función decorada 4. ¿Cómo instalar FastAPI  - Ejecuta en la terminal (con el entorno virtual activado)     pip install "fastapi[standard] 5. ¿Cómo inicializar un proyecto FastAPI - Crea un archivo Python (por ejemplo, main.py) y define la instancia de FastAPI y las rutas como en este archiv 6. ¿Cómo levantar el servido - Ejecuta en la termina     fastapi dev main. - Esto inicia el servidor en modo desarrollo, recargando cambios automáticament - Por defecto, estará disponible en http://localhost:80 7. ¿Cómo parar el servido - Ve a la terminal donde está corriendo y presiona Ctrl+ 8. Documentación automátic - FastAPI genera documentación interactiva e     http://localhost:8000/docs (Swagger U     http://localhost:8000/redoc (ReDoc)
 
 # -------------------------------------------------
 # Sobre el endpoint GET simulando datos y posibilidades
@@ -246,3 +247,20 @@ from fastapi import Query
  Más información sobre query params y validaciones:
  https://fastapi.tiangolo.com/es/tutorial/query-params/
  
+# Te explico la línea:
+
+raise HTTPException(status_code=404, detail="Post no encontrado")
+
+raise: Es una palabra reservada de Python que se usa para lanzar (generar) una excepción. Cuando se ejecuta, detiene la función y devuelve un error al cliente.
+HTTPException: Es una clase de FastAPI (de fastapi import HTTPException) que permite devolver respuestas de error HTTP personalizadas.
+status_code=404: Indica el código de estado HTTP que se enviará al cliente. 404 significa "No encontrado".
+detail="Post no encontrado": Es un mensaje descriptivo que se envía en la respuesta para explicar el error.
+Parámetros principales de HTTPException:
+
+status_code (obligatorio): el código HTTP (por ejemplo, 404, 401, 400, 500, etc.).
+detail (opcional): mensaje explicativo del error.
+headers (opcional): un diccionario de cabeceras HTTP extra para la respuesta.
+Ejemplo con headers:
+raise HTTPException(status_code=401, detail="No autorizado", headers={"WWW-Authenticate": "Bearer"})
+
+En resumen: raise HTTPException(...) sirve para devolver errores HTTP personalizados y claros en tus endpoints de FastAPI.

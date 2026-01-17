@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Query, Body
+from fastapi import FastAPI, Query, Body, HTTPException
 
 app = FastAPI(title="Mini Blog")
 
@@ -92,3 +92,18 @@ def create_post(post: dict = Body(...)):
 # En caso title pero vacío también error avisando title no puede estar vacío
 # aumento automáticon nuevo id y creamos un diccionario nuevo post y lo agregamos 
 # a la lista blog post y añadimos mensaje de post creado
+
+# MÉTODO PUT
+@app.put("/posts/{post_id}") # como quiero actualizar un post le tengo que pasar el id de ese post
+def update_post(post_id: int, data: dict = Body(...)): # recuerda elipsis obligatorio pasar body
+  # lo primero que hago es buscar ese post, itero sobre todo los post
+  for post in BLOG_POST:
+    if post["id"] == post_id:
+      if "title" in data: post["title"] = data["title"]
+      if "content" in data: post["content"] = data["content"]
+      return {"message": "Post actualizado", "data": post}
+    
+ # return {"error": "No se encontró el post"} si el error lo retorno así me da siempre un 200
+ # pero debería ser un 401 si por ejemplo pido post que no existe para eso uso httpexception
+ # ver más info en main.md
+  raise HTTPException(status_code=404, detail="Post no encontrado")
