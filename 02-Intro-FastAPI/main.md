@@ -264,3 +264,12 @@ Ejemplo con headers:
 raise HTTPException(status_code=401, detail="No autorizado", headers={"WWW-Authenticate": "Bearer"})
 
 En resumen: raise HTTPException(...) sirve para devolver errores HTTP personalizados y claros en tus endpoints de FastAPI.
+
+# Por qué usar enumerate en delete
+Usar enumerate en este caso es muy útil porque:
+
+enumerate te da tanto el índice (index) como el elemento (post) al recorrer la lista BLOG_POST.
+Cuando necesitas eliminar un elemento de una lista por su posición, el método pop() requiere el índice, no el objeto.
+Si solo usas un for normal (for post in BLOG_POST), no tienes acceso directo al índice, por lo que sería más complicado eliminar el elemento correcto.
+Además, si hay posts duplicados (con el mismo contenido pero diferente id), eliminar por índice garantiza que solo eliminas el que corresponde exactamente a la posición encontrada.
+En resumen: enumerate facilita eliminar elementos de una lista mientras la recorres, ya que te da el índice exacto que necesitas para usar pop(index) de forma segura y precisa.

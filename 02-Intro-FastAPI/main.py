@@ -107,3 +107,14 @@ def update_post(post_id: int, data: dict = Body(...)): # recuerda elipsis obliga
  # pero debería ser un 401 si por ejemplo pido post que no existe para eso uso httpexception
  # ver más info en main.md
   raise HTTPException(status_code=404, detail="Post no encontrado")
+
+# MÉTODO DELETE
+@app.delete("/posts/{post_id}", status_code=204)
+def delete_post(post_id: int): # vamos a iterar por todos los post pero con un index y post
+  # lo hacemos con un enumerate, por si hay duplicados,etc ver más en main.md
+  for index, post in enumerate(BLOG_POST):
+    if post["id"] == post_id:
+      BLOG_POST.pop(index)
+      return # en vez devolver un mensaje, añadimos un status code 204 de que salió todo bien pero sin contenido
+    # en caso de que no se encuentre ningún post enviado por el usuario disparamos una exception
+  raise HTTPException(status_code=404, detail="Post no encontrado")
