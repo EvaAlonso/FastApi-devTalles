@@ -273,3 +273,9 @@ Cuando necesitas eliminar un elemento de una lista por su posición, el método 
 Si solo usas un for normal (for post in BLOG_POST), no tienes acceso directo al índice, por lo que sería más complicado eliminar el elemento correcto.
 Además, si hay posts duplicados (con el mismo contenido pero diferente id), eliminar por índice garantiza que solo eliminas el que corresponde exactamente a la posición encontrada.
 En resumen: enumerate facilita eliminar elementos de una lista mientras la recorres, ya que te da el índice exacto que necesitas para usar pop(index) de forma segura y precisa.
+
+# Podemos ver toda documentación swagger en 
+http://127.0.0.1:8000/docs#/
+
+# También tenemos documentación en 
+http://127.0.0.1:8000/redoc
